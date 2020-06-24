@@ -1,5 +1,6 @@
 class CalcController {
     
+    // Constructor
     constructor() {
         this._locale = 'pt-BR'; // Get user locale 
 
@@ -7,8 +8,10 @@ class CalcController {
         this._dateEl = document.querySelector("#data");
         this._timeEl = document.querySelector("#hora");
         this.initialize();
+        this.initButtonsEvents();
     }
 
+    // Initialize app
     initialize() {
         
         this.setDisplayDateTime();
@@ -18,7 +21,18 @@ class CalcController {
         }, 1000);
     }
 
+    // Events on keyboard
+    initButtonsEvents() {
+        let buttons = document.querySelectorAll("#buttons > g, #parts > g");
 
+        buttons.forEach((btn, index) => {
+            btn.addEventListener('click', e => {
+                console.log(btn.className.baseVal.replace("btn-", ""));
+            });
+        });
+    }
+
+    // Update Date and Time
     setDisplayDateTime() {
         this.displayDate = this.currentDate.toLocaleDateString(this._locale);
         this.displayTime = this.currentDate.toLocaleTimeString(this._locale);
