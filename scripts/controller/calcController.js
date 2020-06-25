@@ -3,10 +3,11 @@ class CalcController {
     // Constructor
     constructor() {
         this._locale = 'pt-BR'; // Get user locale 
+        this._displayCalcEl = document.querySelector("#display"); // Select element display
+        this._dateEl = document.querySelector("#data"); // Select element date
+        this._timeEl = document.querySelector("#hora"); // Select element hora
 
-        this._displayCalcEl = document.querySelector("#display");
-        this._dateEl = document.querySelector("#data");
-        this._timeEl = document.querySelector("#hora");
+        // Methods
         this.initialize();
         this.initButtonsEvents();
     }
@@ -16,6 +17,7 @@ class CalcController {
         
         this.setDisplayDateTime();
 
+        // Update timer 
         setInterval(() => {
             this.setDisplayDateTime();
         }, 1000);
@@ -38,6 +40,7 @@ class CalcController {
         this.displayTime = this.currentDate.toLocaleTimeString(this._locale);
     }
 
+    // Getters and Setters
     // Get and Set to Display Time
     get displayTime() {
         return this._timeEl.innerHTML;
@@ -46,7 +49,6 @@ class CalcController {
     set displayTime(value) {
         return this._timeEl.innerHTML = value;
     }
-
 
     // Get and Set to Display Date 
     get displayDate() {
@@ -57,7 +59,6 @@ class CalcController {
         return this._dateEl.innerHTML = value;
     }
 
-
     // Get and Set to Display Numbers
     get displayCalc() {
         return this._displayCalcEl.innerHTML;
@@ -66,7 +67,6 @@ class CalcController {
     set displayCalc(value) {
         this._displayCalcEl.innerHTML = value;
     }
-
 
     // Get and Set for Current Date
     get currentDate() {
