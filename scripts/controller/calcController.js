@@ -54,9 +54,47 @@ class CalcController {
         this._operation[this._operation.length - 1] = value;
     }
 
+    pushOperation(value) {
+        this._operation.push(value);
+
+        if (this._operation.length > 3) {
+            
+
+            this.calc();
+        }
+
+    }
+
+    // Performs the calculation according to array data
+    calc() {
+        let last = this._operation.pop();
+
+        let result =  eval(this._operation.join(""));
+
+        this._operation = [result, last];
+
+        this.setLastNumberToDisplay();
+    }
+
+    // Update display with last number entered
+    setLastNumberToDisplay() {
+        let lastNumber;
+
+        // Walks through the array that contains the last number entered
+        for (let i = this._operation.length-1; i >= 0; i--) {
+            if (!this.isOperator(this._operation[i])) {
+                lastNumber = this._operation[i];
+                break;
+            }
+        }
+
+        // Show numbers
+        this.displayCalc = lastNumber;
+    }
+
+
     // Add operations (numbers and signs) in the array _operation
     addOperation(value) {
-        console.log('A', isNaN(this.getLastOperation()));
         // Not a number
         if (isNaN(this.getLastOperation())) {
             if (this.isOperator(value)) {
@@ -64,17 +102,25 @@ class CalcController {
                 this.setLastOperation(value);
 
             } else if (isNaN(value)) {
-                console.log(value);
+                console.log('Outra coisa', value);
             } else {
-                this._operation.push(value);
+                this.pushOperation(value);
+
+                // Update display
+                this.setLastNumberToDisplay();
             }
         } else {
-            // Is Number
-            let newValue = this.getLastOperation().toString() + value.toString();
-            this.setLastOperation(parseInt(newValue));
-        }
+            if (this.isOperator(value)) {
+                this.pushOperation(value);
+            } else {
+                // Is Number
+                let newValue = this.getLastOperation().toString() + value.toString();
+                this.setLastOperation(parseInt(newValue));
 
-        console.log(this._operation);
+                // Update display
+                this.setLastNumberToDisplay();
+            }
+        }
     }
 
     // Selection method for buttons
