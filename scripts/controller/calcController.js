@@ -24,25 +24,58 @@ class CalcController {
         }, 1000);
     }
 
-
+    // Set AC method
     clearAll() {
         this._operation = [];
     }
 
-
+    // Set CE method
     clearEntry() {
         this._operation.pop();
     }
 
+    // Set error message
     setError() {
         this.displayCalc = 'Error';
     }
 
-    addOperation(value) {
-        this._operation.push(value);
-        console.log(this._operation);
+    // Gets the last operation entered by the user
+    getLastOperation() {
+        return this._operation[this._operation.length - 1];
     }
 
+    // Array of operations for validation
+    isOperator(value) {
+        return (['+', '-', '*', '/', '%'].indexOf(value) > -1);
+    }
+
+    // Assigns the last operation entered by the user to define what should be done next
+    setLastOperation(value) {
+        this._operation[this._operation.length - 1] = value;
+    }
+
+    // Add operations (numbers and signs) in the array _operation
+    addOperation(value) {
+        console.log('A', isNaN(this.getLastOperation()));
+        // Not a number
+        if (isNaN(this.getLastOperation())) {
+            if (this.isOperator(value)) {
+                // Change the operator
+                this.setLastOperation(value);
+
+            } else if (isNaN(value)) {
+                console.log(value);
+            } else {
+                this._operation.push(value);
+            }
+        } else {
+            // Is Number
+            let newValue = this.getLastOperation().toString() + value.toString();
+            this.setLastOperation(parseInt(newValue));
+        }
+
+        console.log(this._operation);
+    }
 
     // Selection method for buttons
     execBtn(value) {
@@ -57,21 +90,30 @@ class CalcController {
                 break;
 
             case 'soma':
+                this.addOperation('+');
                 break;
 
             case 'multiplicacao':
+                this.addOperation('*');
                 break;
 
             case 'subtracao':
+                this.addOperation('-');
                 break;
 
             case 'divisao':
+                this.addOperation('/');
                 break;
 
             case 'porcento':
+                this.addOperation('%');
                 break;
 
             case 'igual':
+                break;
+
+            case 'ponto':
+                this.addOperation('.');
                 break;
 
             default:
