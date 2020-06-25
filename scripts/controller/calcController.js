@@ -1,7 +1,8 @@
 class CalcController {
-    
+
     // Constructor
     constructor() {
+        this._operation = []; // Save last operation
         this._locale = 'pt-BR'; // Get user locale 
         this._displayCalcEl = document.querySelector("#display"); // Select element display
         this._dateEl = document.querySelector("#data"); // Select element date
@@ -14,13 +15,83 @@ class CalcController {
 
     // Initialize app
     initialize() {
-        
+
         this.setDisplayDateTime();
 
         // Update timer 
         setInterval(() => {
             this.setDisplayDateTime();
         }, 1000);
+    }
+
+
+    clearAll() {
+        this._operation = [];
+    }
+
+
+    clearEntry() {
+        this._operation.pop();
+    }
+
+    setError() {
+        this.displayCalc = 'Error';
+    }
+
+    addOperation(value) {
+        this._operation.push(value);
+        console.log(this._operation);
+    }
+
+
+    // Selection method for buttons
+    execBtn(value) {
+        switch (value) {
+            // Operations
+            case 'ac':
+                this.clearAll();
+                break;
+
+            case 'ce':
+                this.clearEntry();
+                break;
+
+            case 'soma':
+                break;
+
+            case 'multiplicacao':
+                break;
+
+            case 'subtracao':
+                break;
+
+            case 'divisao':
+                break;
+
+            case 'porcento':
+                break;
+
+            case 'igual':
+                break;
+
+            default:
+                this.setError();
+                break;
+
+            // Numbers
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                this.addOperation(parseInt(value));
+                break;
+        }
     }
 
     // Adding multiple events
@@ -36,7 +107,9 @@ class CalcController {
 
         buttons.forEach((btn, index) => {
             this.addEventListenerAll(btn, 'click drag', e => {
-                console.log(btn.className.baseVal.replace("btn-", ""));
+                let textBtn = btn.className.baseVal.replace("btn-", "");
+
+                this.execBtn(textBtn);
             });
 
             this.addEventListenerAll(btn, 'mouseover mouseup mousedown', e => {
@@ -86,5 +159,5 @@ class CalcController {
 
     set currentDate(value) {
         this._currentDate = value;
-    } 
+    }
 }
