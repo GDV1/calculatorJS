@@ -2,6 +2,9 @@ class CalcController {
 
     // Constructor
     constructor() {
+        this._lastOperator = '';
+        this._lastNumber = '';
+
         this._operation = []; // Save last operation
         this._locale = 'pt-BR'; // Get user locale 
         this._displayCalcEl = document.querySelector("#display"); // Select element display
@@ -29,6 +32,8 @@ class CalcController {
     // Set AC method
     clearAll() {
         this._operation = [];
+        this._lastNumber = '';
+        this._lastOperator = '';
         this.setLastNumberToDisplay(); // Clear display
     }
 
@@ -66,22 +71,42 @@ class CalcController {
         }
     }
 
+    getResult() {
+        return eval(this._operation.join(""));
+    }
+
     // Performs the calculation according to array data
     calc() {
 
         let last = '';
 
-        if (this._operation > 3) {
-            last = this._operation.pop();
+        this._lastOperator = this.getLastItem();
+
+        if (this._operation.length < 3) {
+            let firstItem = this._operation[0];
+
+            this._operation = [firstItem, this._lastOperator, this._lastNumber];
         }
 
-        let result =  eval(this._operation.join(""));
+        if (this._operation.length > 3) {
+            last = this._operation.pop();
+
+            this._lastNumber = this.getResult();
+
+        } else if (this._operation.length === 3) {
+            this._lastNumber = this.getResult(false);
+        }
 
 
-        if (last == '%') {
+        let result = this.getResult(); 
+
+        if (last === '%') {
+
             result = (result/100);
             this._operation = [result];
+
         } else {
+
             this._operation = [result];
 
             if (last) this._operation.push(last);
@@ -89,17 +114,26 @@ class CalcController {
         this.setLastNumberToDisplay();
     }
 
-    // Update display with last number entered
-    setLastNumberToDisplay() {
-        let lastNumber;
+    getLastItem(isOperator = true) {
+        let lastItem;
 
-        // Walks through the array that contains the last number entered
         for (let i = this._operation.length-1; i >= 0; i--) {
-            if (!this.isOperator(this._operation[i])) {
-                lastNumber = this._operation[i];
+            if (this.isOperator(this._operation[i]) == isOperator) {
+                lastItem = this._operation[i];
                 break;
             }
         }
+
+        if (!lastItem) {
+            lastItem = (isOperator) ? this._lastOperator : this._lastNumber;
+        }
+
+        return lastItem;
+    }
+
+    // Update display with last number entered
+    setLastNumberToDisplay() {
+        let lastNumber = this.getLastItem(false);
 
         if (!lastNumber) lastNumber = 0;
 
@@ -116,8 +150,6 @@ class CalcController {
                 // Change the operator
                 this.setLastOperation(value);
 
-            } else if (isNaN(value)) {
-                console.log('Outra coisa', value);
             } else {
                 this.pushOperation(value);
 
@@ -130,12 +162,24 @@ class CalcController {
             } else {
                 // Is Number
                 let newValue = this.getLastOperation().toString() + value.toString();
-                this.setLastOperation(parseInt(newValue));
+                this.setLastOperation(parseFloat(newValue));
 
                 // Update display
                 this.setLastNumberToDisplay();
             }
         }
+    }
+
+    addDot() {
+        let lastOperation = this.getLastOperation();
+
+        if (this.isOperator(lastOperation) || !lastOperation) {
+            this.pushOperation('0.');
+        } else {
+            this.setLastOperation(lastOperation.toString() + '.');
+        }
+
+        this.setLastNumberToDisplay();
     }
 
     // Selection method for buttons
@@ -175,7 +219,7 @@ class CalcController {
                 break;
 
             case 'ponto':
-                this.addOperation('.');
+                this.addDot();
                 break;
 
             default:
