@@ -5,6 +5,9 @@ class CalcController {
         this._lastOperator = '';
         this._lastNumber = '';
 
+        this._audioOnOff = false;
+        this._audio = new Audio('click.mp3');
+
         this._operation = []; // Save last operation
         this._locale = 'pt-BR'; // Get user locale 
         this._displayCalcEl = document.querySelector("#display"); // Select element display
@@ -53,11 +56,29 @@ class CalcController {
 
         this.setLastNumberToDisplay(); // Clear display
         this.pasteFromClipboard();
+
+        document.querySelectorAll('.btn-ac').forEach(btn => {
+            btn.addEventListener('dblclick', e => {
+                this.toggleAudio();
+            })
+        })
+    }
+
+    toggleAudio() {
+        this._audioOnOff = !this._audioOnOff;
+    }
+
+    playAudio() {
+        if (this._audioOnOff) {
+            this._audio.currentTime = 0;
+            this._audio.play();
+        }
     }
 
     // Add keyboard events
     initKeyboard() {
         document.addEventListener('keyup', e => {
+            this.playAudio();
 
             switch (e.key) {
                 // Operations
@@ -265,6 +286,9 @@ class CalcController {
 
     // Selection method for buttons
     execBtn(value) {
+
+        this.playAudio();
+
         switch (value) {
             // Operations
             case 'ac':
@@ -374,6 +398,11 @@ class CalcController {
     }
 
     set displayCalc(value) {
+        if (value.toString().length > 10) {
+            this.setError();
+            return false;
+        }
+
         this._displayCalcEl.innerHTML = value;
     }
 
