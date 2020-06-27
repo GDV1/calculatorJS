@@ -17,6 +17,30 @@ class CalcController {
         this.initKeyboard();
     }
 
+    // CTRL+V method
+    pasteFromClipboard() {
+        document.addEventListener('paste', e => {
+            let text = e.clipboardData.getData('Text');
+
+            this.displayCalc = parseFloat(text);
+        });
+    }
+
+    // CTRL+C method
+    copyToClipboard() {
+        let input = document.createElement('input');
+
+        input.value = this.displayCalc;
+
+        document.body.appendChild(input);
+
+        input.select();
+
+        document.execCommand("Copy");
+
+        input.remove();
+    }
+
     // Initialize app
     initialize() {
 
@@ -28,6 +52,7 @@ class CalcController {
         }, 1000);
 
         this.setLastNumberToDisplay(); // Clear display
+        this.pasteFromClipboard();
     }
 
     // Add keyboard events
@@ -62,10 +87,6 @@ class CalcController {
                     this.addDot();
                     break;
 
-                default:
-                    this.setError();
-                    break;
-
                 // Numbers
                 case '0':
                 case '1':
@@ -78,6 +99,10 @@ class CalcController {
                 case '8':
                 case '9':
                     this.addOperation(parseInt(e.key));
+                    break;
+
+                case 'c':
+                    if (e.ctrlKey) this.copyToClipboard();
                     break;
             }
         });
@@ -276,10 +301,6 @@ class CalcController {
 
             case 'ponto':
                 this.addDot();
-                break;
-
-            default:
-                this.setError();
                 break;
 
             // Numbers
