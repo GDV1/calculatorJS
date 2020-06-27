@@ -14,6 +14,7 @@ class CalcController {
         // Methods
         this.initialize();
         this.initButtonsEvents();
+        this.initKeyboard();
     }
 
     // Initialize app
@@ -27,6 +28,59 @@ class CalcController {
         }, 1000);
 
         this.setLastNumberToDisplay(); // Clear display
+    }
+
+    // Add keyboard events
+    initKeyboard() {
+        document.addEventListener('keyup', e => {
+
+            switch (e.key) {
+                // Operations
+                case 'Escape':
+                    this.clearAll();
+                    break;
+
+                case 'Backspace':
+                    this.clearEntry();
+                    break;
+
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                case '%':
+                    this.addOperation(e.key);
+                    break;
+
+                case 'Enter':
+                case '=':
+                    this.calc();
+                    break;
+
+                case ',':
+                case '.':
+                    this.addDot();
+                    break;
+
+                default:
+                    this.setError();
+                    break;
+
+                // Numbers
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    this.addOperation(parseInt(e.key));
+                    break;
+            }
+        });
     }
 
     // Set AC method
@@ -98,11 +152,11 @@ class CalcController {
         }
 
 
-        let result = this.getResult(); 
+        let result = this.getResult();
 
         if (last === '%') {
 
-            result = (result/100);
+            result = (result / 100);
             this._operation = [result];
 
         } else {
@@ -117,7 +171,7 @@ class CalcController {
     getLastItem(isOperator = true) {
         let lastItem;
 
-        for (let i = this._operation.length-1; i >= 0; i--) {
+        for (let i = this._operation.length - 1; i >= 0; i--) {
             if (this.isOperator(this._operation[i]) == isOperator) {
                 lastItem = this._operation[i];
                 break;
